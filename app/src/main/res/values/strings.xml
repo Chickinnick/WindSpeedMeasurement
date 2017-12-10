@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">WindSpeedMeasurement</string>
+    <string name="minus_5_db">-5\ndB</string>
+    <string name="minus_1_db">-1\ndB</string>
+    <string name="plus_1_db">+1\ndB</string>
+    <string name="plus_5_db">+5\ndB</string>
+
+    <string name="gain_error_text">Sensitivity correction:</string>
+    <string name="gain">0.0</string>
 </resources>
