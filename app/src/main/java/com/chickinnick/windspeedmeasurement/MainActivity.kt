@@ -1,15 +1,12 @@
 package com.chickinnick.windspeedmeasurement
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.ToggleButton
 import com.chickinnick.audioanalyzer.MicrophoneInput
@@ -20,13 +17,12 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import java.lang.Math.abs
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
     lateinit var micInput: MicrophoneInput
     lateinit var mdBTextView: TextView
-    lateinit var mdBFractionTextView: TextView
-    lateinit var mBarLevel: BarLevelDrawable
     lateinit var mGainTextView: TextView
 
     // The Google ASR input requirements state that audio input sensitivity
@@ -59,10 +55,7 @@ class MainActivity : AppCompatActivity() {
                 })
                 .check();
 
-        mBarLevel = findViewById<BarLevelDrawable>(R.id.bar_level_drawable_view)
         mdBTextView = findViewById<TextView>(R.id.dBTextView)
-        mdBFractionTextView = findViewById<TextView>(R.id.dBFractionTextView)
-        mGainTextView = findViewById<TextView>(R.id.gain)
         val onOffButton = findViewById<ToggleButton>(R.id.on_off_toggle_button)
         val tbListener = object : View.OnClickListener {
             override fun onClick(v: View) {
@@ -77,18 +70,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         onOffButton.setOnClickListener(tbListener)
-        val minus5dbButton = findViewById<Button>(R.id.minus_5_db_button)
-        val minus5dBButtonListener = DbClickListener(-5.0)
-        minus5dbButton.setOnClickListener(minus5dBButtonListener)
-        val minus1dbButton = findViewById<Button>(R.id.minus_1_db_button)
-        val minus1dBButtonListener = DbClickListener(-1.0)
-        minus1dbButton.setOnClickListener(minus1dBButtonListener)
-        val plus1dbButton = findViewById<Button>(R.id.plus_1_db_button)
-        val plus1dBButtonListener = DbClickListener(1.0)
-        plus1dbButton.setOnClickListener(plus1dBButtonListener)
-        val plus5dbButton = findViewById<Button>(R.id.plus_5_db_button)
-        val plus5dBButtonListener = DbClickListener(5.0)
-        plus5dbButton.setOnClickListener(plus5dBButtonListener)
     }
 
     private inner class DbClickListener(private val gainIncrement: Double) : View.OnClickListener {
@@ -125,23 +106,19 @@ class MainActivity : AppCompatActivity() {
 
                 // Compute a smoothed version for less flickering of the display.
                 mRmsSmoothed = mRmsSmoothed * mAlpha + (1 - mAlpha) * rms
-                val rmsdB = 20.0 * Math.log10(mGain * mRmsSmoothed)
+                val rmsdB = abs(30.0 * Math.log10(mGain * mRmsSmoothed))
 
                 // Set up a method that runs on the UI thread to update of the LED bar
                 // and numerical display.
-                mBarLevel.post {
                     // The bar has an input range of [0.0 ; 1.0] and 10 segments.
                     // Each LED corresponds to 6 dB.
-                    mBarLevel.level = ((mOffsetdB + rmsdB) / 60)
-
-                    val df = DecimalFormat("##")
-                    mdBTextView.text = df.format(20 + rmsdB)
-
-                    val df_fraction = DecimalFormat("#")
-                    val one_decimal = Math.round(Math.abs(rmsdB * 10)).toInt() % 10
-                    mdBFractionTextView.text = Integer.toString(one_decimal)
+                Thread.sleep(100)
+                runOnUiThread({
+                    val df = DecimalFormat("##.#")
+                    mdBTextView.text = df.format(rmsdB)
                     mDrawing = false
-                }
+                })
+
             } else {
                 mDrawingCollided++
                 Log.v(TAG, "Level bar update collision, i.e. update took longer " +
