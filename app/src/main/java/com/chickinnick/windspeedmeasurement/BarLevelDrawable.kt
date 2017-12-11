@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 
 class BarLevelDrawable : View {
-    private var mDrawable: ShapeDrawable? = null
+    private lateinit var mDrawable: ShapeDrawable
     private var mLevel = 0.1
 
     internal val segmentColors = intArrayOf(-0xaaaa01, -0xaaaa01, -0xff0100, -0xff0100, -0xff0100, -0xff0100, -0x100, -0x100, -0x10000, -0x10000)
@@ -51,12 +51,12 @@ class BarLevelDrawable : View {
         for (i in segmentColors.indices) {
             x = x + padding
             if (mLevel * segmentColors.size > i + 0.5) {
-                mDrawable!!.paint.color = segmentColors[i]
+                mDrawable.paint.color = segmentColors[i]
             } else {
-                mDrawable!!.paint.color = segmentOffColor
+                mDrawable.paint.color = segmentOffColor
             }
-            mDrawable!!.setBounds(x, y, x + width, y + height)
-            mDrawable!!.draw(canvas)
+            mDrawable.setBounds(x, y, x + width, y + height)
+            mDrawable.draw(canvas)
             x = x + width + padding
         }
     }
