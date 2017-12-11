@@ -7,21 +7,6 @@ import android.graphics.drawable.shapes.RectShape
 import android.util.AttributeSet
 import android.view.View
 
-/**
- * This class draws a colorful graphical level indicator similar to an
- * LED VU bar graph.
- *
- * This is a user defined View UI element that contains a ShapeDrawable, which
- * means it can be placed using in the XML UI configuration and updated
- * dynamically at runtime.
- *
- * To set the level, use setLevel(level). Level should be in the range
- * [0.0 ; 1.0].
- *
- * To change the number of segments or colors, change the segmentColors array.
- *
- * @author Trausti Kristjansson
- */
 class BarLevelDrawable : View {
     private var mDrawable: ShapeDrawable? = null
     private var mLevel = 0.1

@@ -73,14 +73,6 @@ open class MicrophoneInput(private val mListener: MicrophoneInputListener) : Run
         }
     }
 
-    fun totalSamples(): Int {
-        return mTotalSamples
-    }
-
-    fun setTotalSamples(totalSamples: Int) {
-        mTotalSamples = totalSamples
-    }
-
     /**
      * Helper method to find a buffer size for AudioRecord which will be at
      * least 1 second.
@@ -100,8 +92,5 @@ open class MicrophoneInput(private val mListener: MicrophoneInputListener) : Run
         return buffSize
     }
 
-    companion object {
-
-        private val TAG = "MicrophoneInput"
-    }
+    private val TAG = "MicrophoneInput"
 }
